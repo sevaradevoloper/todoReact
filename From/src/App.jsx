@@ -1,34 +1,44 @@
 import React, { useState } from 'react';
 
-function App() {
-  // Inputdagi matnni saqlash uchun state
-  const [inputValue, setInputValue] = useState('');
+const App = () => {
+  const [text, setText] = useState("");
+  const [todos, setToDos] = useState([]);
 
-  // Form yuborilganda ishlaydigan funksiya
-  const handleSubmit = (event) => {
-    event.preventDefault(); // Sahifa qayta yuklanishini oldini oladi
-    console.log("Kiritilgan ma'lumot:", inputValue);
+  // QO'SHISH FUNKSIYASI
+  const qoshish = () => {
+    if (text === "") return;
     
-    // Inputni tozalash (ixtiyoriy)
-    setInputValue('');
+    // Yangi massiv yaratib, unga eski todos va yangi textni qo'shamiz
+    const yangiMassiv = [...todos, text];
+    setToDos(yangiMassiv);
+    setText(""); 
+  };
+
+  // O'CHIRISH FUNKSIYASI (Osonroq variant)
+  const handleDelete = (index) => {
+    // 1. Eskisidan nusxa olamiz (Chunki Reactda eskisini to'g'ridan-to'g'ri o'zgartirib bo'lmaydi)
+    const nusxa = [...todos];
+    
+    // 2. Nusxadan bitta elementni o'chirib tashlaymiz
+    nusxa.splice(index, 1);
+    
+    // 3. O'zgargan nusxani asosiy ro'yxatga saqlaymiz
+    setToDos(nusxa);
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Ma'lumot yuborish</h2>
-      
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          placeholder="Biror narsa yozing..." 
-          value={inputValue} // State bilan bog'lash
-          onChange={(e) => setInputValue(e.target.value)} // Har bir harf yozilganda stateni yangilash
-        />
-        
-        <button type="submit">Submit</button>
-      </form>
+    <div>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <button onClick={qoshish}>Qo'shish</button>
 
-      <p>Hozirgi yozilayotgan matn: {inputValue}</p>
+      <ul>
+        {todos.map((todo, index) => (
+          <li key={index}>
+            {todo} 
+            <button onClick={() => handleDelete(index)}>O'chirish</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
